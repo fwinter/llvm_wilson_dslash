@@ -1,0 +1,9 @@
+ void func_dslash_____1(int64_t lo, int64_t hi, int64_t myId, bool ordered, int64_t start, const int*  arg0, double*  arg1, const int*  arg2, double*  arg3, double*  arg4, double*  arg5, const int*  arg6, double*  arg7, double*  arg8, double*  arg9, const int*  arg10, double*  arg11, double*  arg12, double*  arg13, const int*  arg14, double*  arg15, double*  arg16, double*  arg17, const int*  arg18, double*  arg19, double*  arg20, double*  arg21, const int*  arg22, double*  arg23, double*  arg24, double*  arg25, const int*  arg26, double*  arg27, double*  arg28, double*  arg29, const int*  arg30, double*  arg31, double*  arg32, double*  arg33) ;
+ void func_gather_M_3_1(int64_t lo, int64_t hi, int64_t myId, bool ordered, int64_t start, const int*  arg0, double*  arg1, double*  arg2, double*  arg3) ;
+ void func_gather_P_3_1(int64_t lo, int64_t hi, int64_t myId, bool ordered, int64_t start, const int*  arg0, double*  arg1, double*  arg2) ;
+ void func_gather_M_2_1(int64_t lo, int64_t hi, int64_t myId, bool ordered, int64_t start, const int*  arg0, double*  arg1, double*  arg2, double*  arg3) ;
+ void func_gather_P_2_1(int64_t lo, int64_t hi, int64_t myId, bool ordered, int64_t start, const int*  arg0, double*  arg1, double*  arg2) ;
+ void func_gather_M_1_1(int64_t lo, int64_t hi, int64_t myId, bool ordered, int64_t start, const int*  arg0, double*  arg1, double*  arg2, double*  arg3) ;
+ void func_gather_P_1_1(int64_t lo, int64_t hi, int64_t myId, bool ordered, int64_t start, const int*  arg0, double*  arg1, double*  arg2) ;
+ void func_gather_M_0_1(int64_t lo, int64_t hi, int64_t myId, bool ordered, int64_t start, const int*  arg0, double*  arg1, double*  arg2, double*  arg3) ;
+ void func_gather_P_0_1(int64_t lo, int64_t hi, int64_t myId, bool ordered, int64_t start, const int*  arg0, double*  arg1, double*  arg2) ;
