@@ -1,4 +1,4 @@
-LLC=$(HOME)/toolchain/install/llvm/bin/llc
+LLC=/home/projects/llvm/bin/llc
 
 TARGET=lib/libdslash_llvm.a
 
@@ -31,7 +31,7 @@ DSLASH_OBJS = $(subst .ll,.o,$(DSLASH_LIST))
 all: $(TARGET)
 
 %.o: %.ll
-	$(LLC) -filetype=obj $<
+	$(LLC) -filetype=obj -march=ppc64 -mcpu=a2q -mattr=+qpx -fp-contract=fast $<
 
 clean:
 	rm -rf $(TARGET) $(DSLASH_OBJS) 
