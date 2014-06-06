@@ -1,0 +1,105 @@
+Index: include/llvm/LinkAllPasses.h
+===================================================================
+--- include/llvm/LinkAllPasses.h	(revision 206161)
++++ include/llvm/LinkAllPasses.h	(working copy)
+@@ -157,6 +157,8 @@
+       (void) llvm::createPartiallyInlineLibCallsPass();
+       (void) llvm::createScalarizerPass();
+ 
++      (void) llvm::createStupidAlignPass();
++
+       (void)new llvm::IntervalPartition();
+       (void)new llvm::FindUsedTypes();
+       (void)new llvm::ScalarEvolution();
+Index: include/llvm/Transforms/Vectorize.h
+===================================================================
+--- include/llvm/Transforms/Vectorize.h	(revision 206161)
++++ include/llvm/Transforms/Vectorize.h	(working copy)
+@@ -117,6 +117,10 @@
+ Pass *createLoopVectorizePass(bool NoUnrolling = false,
+                               bool AlwaysVectorize = true);
+ 
++
++Pass *createStupidAlignPass();
++
++
+ //===----------------------------------------------------------------------===//
+ //
+ // SLPVectorizer - Create a bottom-up SLP vectorizer pass.
+Index: lib/Transforms/Vectorize/LoopVectorize.cpp
+===================================================================
+--- lib/Transforms/Vectorize/LoopVectorize.cpp	(revision 206161)
++++ lib/Transforms/Vectorize/LoopVectorize.cpp	(working copy)
+@@ -92,9 +92,11 @@
+ #include "llvm/Transforms/Utils/BasicBlockUtils.h"
+ #include "llvm/Transforms/Utils/Local.h"
+ #include "llvm/Transforms/Utils/VectorUtils.h"
++#include "llvm/IR/TypeBuilder.h"
+ #include <algorithm>
+ #include <map>
+ 
++
+ using namespace llvm;
+ using namespace llvm::PatternMatch;
+ 
+@@ -1197,6 +1199,54 @@
+ 
+ };
+ 
++
++  struct StupidAlign : public FunctionPass {
++    static char ID; // Pass identification, replacement for typeid
++    StupidAlign() : FunctionPass(ID) {}
++
++    bool runOnFunction(Function &F) override {
++      bool modified = false;
++
++      for (Function::iterator FI = F.begin(), FE = F.end(); FI != FE; ) {
++	BasicBlock *BB = FI++;
++	for (BasicBlock::iterator BI = BB->begin(), BE = BB->end(); BI != BE;) {
++	  Instruction *I = BI++;
++	  if (isa<LoadInst>(I) || isa<StoreInst>(I)) {
++	    unsigned alignment = isa<LoadInst>(I) ? cast<LoadInst>(I)->getAlignment() : cast<StoreInst>(I)->getAlignment();
++	    Value* pointer = isa<LoadInst>(I) ? cast<LoadInst>(I)->getPointerOperand() : cast<StoreInst>(I)->getPointerOperand();
++	    if (alignment == 8) {
++	      if (isa<CastInst>(pointer)) {
++		Type* dest_type = cast<CastInst>(pointer)->getDestTy();
++
++		if (dest_type == PointerType::getUnqual( 
++							VectorType::get( 
++									TypeBuilder<double,false>::get( getGlobalContext() ) , 
++									4 ) ) ) {
++		  if (isa<LoadInst>(I))
++		    cast<LoadInst>(I)->setAlignment(32);
++		  else
++		    cast<StoreInst>(I)->setAlignment(32);
++		  modified = true;
++		}
++	      }
++	    }
++	  }
++	}
++      }
++
++      return modified;
++    }
++  };
++
++  char StupidAlign::ID = 0;
++  static RegisterPass<StupidAlign> X("stupidalign", "Stupid align pass");
++
++
++
+ } // end anonymous namespace
+ 
+ //===----------------------------------------------------------------------===//
+@@ -5683,6 +5733,9 @@
+   Pass *createLoopVectorizePass(bool NoUnrolling, bool AlwaysVectorize) {
+     return new LoopVectorize(NoUnrolling, AlwaysVectorize);
+   }
++  Pass *createStupidAlignPass() {
++    return new StupidAlign();
++  }
+ }
+ 
+ bool LoopVectorizationCostModel::isConsecutiveLoadOrStore(Instruction *Inst) {
