@@ -1,4 +1,4 @@
-LLC=/home/projects/llvm/bin/llc
+LLC=/g/g90/winter25/bgclang/stage1/bin/llc
 
 TARGET=lib/libdslash_llvm.a
 
