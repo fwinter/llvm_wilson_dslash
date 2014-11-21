@@ -1,0 +1,11 @@
+--- a/Makefile	2014-04-10 18:14:37.476669066 +0000
++++ b/Makefile	2014-04-10 17:48:06.422745010 +0000
+@@ -125,7 +125,7 @@
+ 	  fi; \
+ 	  $(PROJ_SRC_DIR)/configure --build=$(BUILD_TRIPLE) \
+ 		--host=$(BUILD_TRIPLE) --target=$(BUILD_TRIPLE) \
+-	        --disable-polly $$configure_opts; \
++	        --disable-polly CC=$(CC) CXX=$(CXX) AR=$(AR) AS=$(AS) LD=$(LD) $$configure_opts; \
+ 	  cd .. ; \
+ 	fi; \
+ 	($(MAKE) -C BuildTools \
